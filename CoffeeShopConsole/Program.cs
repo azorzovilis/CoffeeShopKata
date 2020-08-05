@@ -1,7 +1,8 @@
-﻿namespace CoffeeShopProblem
+﻿namespace CoffeeShop.Console
 {
     using System;
-    using CoffeeShop.Core;
+    using Core;
+    using Core.Services;
 
     class Program
     {
@@ -72,7 +73,7 @@
                 LoyaltyPointsGained = 5
             };
 
-            _coffeeShop = new CoffeeShop(drink);
+            _coffeeShop = new CoffeeShop(drink, new CoffeeShopReportGenerator());
         }
     }
 }

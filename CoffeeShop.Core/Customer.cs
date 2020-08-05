@@ -12,6 +12,7 @@
     {
         General,
         LoyaltyMember,
-        CoffeeEmployee
+        CoffeeEmployee,
+        DiscountMember
     }
 }

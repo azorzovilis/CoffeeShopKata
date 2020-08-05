@@ -4,10 +4,10 @@
     {
         string Title { get; set; }
 
-        double BasePrice { get; set; }
+        decimal BasePrice { get; set; }
+
+        decimal BaseCost { get; set; }
 
         int LoyaltyPointsGained { get; set; }
-
-        double BaseCost { get; set; }
     }
 }

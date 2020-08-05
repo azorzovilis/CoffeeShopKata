@@ -4,7 +4,9 @@ namespace CoffeeShop.Core.UnitTests
     using NUnit.Framework;
     using System;
     using System.Linq;
+    using Services;
 
+    //TODO: This test should become an integration test
     public class CoffeeShopTests
     {
         private readonly IDrink _drink = Mock.Of<IDrink>();
@@ -15,7 +17,7 @@ namespace CoffeeShop.Core.UnitTests
         {
             _itemUnderTest = GivenCoffeeShop();
 
-            var customer = new Customer { Name = "Artemis"};
+            var customer = new Customer { Name = "Artemis" };
 
             _itemUnderTest.AddCustomer(customer);
 
@@ -41,7 +43,9 @@ namespace CoffeeShop.Core.UnitTests
                 "Coffee Shop generating profit of: 150" + Environment.NewLine + Environment.NewLine +
                 "Total loyalty points given away: 10" + Environment.NewLine +
                 "Total loyalty points redeemed: 100" + Environment.NewLine + Environment.NewLine +
-                "Coffee Shop will open tomorrow",
+                "Beans used: 1050" + Environment.NewLine +
+                "Beans remaining: -50" + Environment.NewLine + Environment.NewLine +
+                "Coffee Shop will not open tomorrow",
                 result);
         }
 
@@ -63,7 +67,9 @@ namespace CoffeeShop.Core.UnitTests
                             "Coffee Shop losing money of: 0" + Environment.NewLine + Environment.NewLine +
                             "Total loyalty points given away: 0" + Environment.NewLine +
                             "Total loyalty points redeemed: 0" + Environment.NewLine + Environment.NewLine +
-                            "Coffee Shop will not open tomorrow", 
+                            "Beans used: 0" + Environment.NewLine +
+                            "Beans remaining: 1000" + Environment.NewLine + Environment.NewLine +
+                            "Coffee Shop will not open tomorrow",
                     result);
         }
 
@@ -72,10 +78,10 @@ namespace CoffeeShop.Core.UnitTests
             var drink = Mock.Of<IDrink>(d =>
                 d.Title == "Americano" && d.BaseCost == 50 && d.BasePrice == 100 && d.LoyaltyPointsGained == 5);
 
-            var coffeeShop = new CoffeeShop(drink);
-            
-            coffeeShop.AddCustomer(new Customer { Name = "Christopher", Type = CustomerType.General});
-            coffeeShop.AddCustomer(new Customer { Name = "Damian", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 1000, IsUsingLoyaltyPoints = true});
+            var coffeeShop = new CoffeeShop(drink, new CoffeeShopReportGenerator());
+
+            coffeeShop.AddCustomer(new Customer { Name = "Christopher", Type = CustomerType.General });
+            coffeeShop.AddCustomer(new Customer { Name = "Damian", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 1000, IsUsingLoyaltyPoints = true });
             coffeeShop.AddCustomer(new Customer { Name = "Craig", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 0, IsUsingLoyaltyPoints = false });
             coffeeShop.AddCustomer(new Customer { Name = "Kirsty", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 60, IsUsingLoyaltyPoints = false });
             coffeeShop.AddCustomer(new Customer { Name = "Andrzej", Type = CustomerType.CoffeeEmployee });
@@ -87,7 +93,7 @@ namespace CoffeeShop.Core.UnitTests
 
         private ICoffeeShop GivenEmptyCoffeeShop()
         {
-            return new CoffeeShop(_drink);
+            return new CoffeeShop(_drink, new CoffeeShopReportGenerator());
         }
     }
 }

@@ -8,8 +8,8 @@
         }
 
         public string Title { get; set; }
-        public double BasePrice { get; set; }
-        public double BaseCost { get; set; }
+        public decimal BasePrice { get; set; }
+        public decimal BaseCost { get; set; }
         public int LoyaltyPointsGained { get; set; }    
     }
 }
