@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E056E56E-6844-4459-8BDC-C0CE3B23467B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeShop.Core.UnitTests", "CoffeeShop.Core.UnitTests\CoffeeShop.Core.UnitTests.csproj", "{7BFFA22A-3281-47D1-AA01-CB2565C85CE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +30,16 @@ Global
 		{22F6B34B-9154-4944-B1FD-D5564E250AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22F6B34B-9154-4944-B1FD-D5564E250AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22F6B34B-9154-4944-B1FD-D5564E250AE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BFFA22A-3281-47D1-AA01-CB2565C85CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BFFA22A-3281-47D1-AA01-CB2565C85CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BFFA22A-3281-47D1-AA01-CB2565C85CE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BFFA22A-3281-47D1-AA01-CB2565C85CE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7BFFA22A-3281-47D1-AA01-CB2565C85CE7} = {E056E56E-6844-4459-8BDC-C0CE3B23467B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF38DD9D-DDBE-47FF-9DB9-F7DE99E6533A}

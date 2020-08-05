@@ -4,19 +4,19 @@
     using System.Linq;
     using System.Collections.Generic;
 
-    public class CoffeeShop
+    public class CoffeeShop : ICoffeeShop
     {
         private readonly string VERTICAL_WHITE_SPACE = Environment.NewLine + Environment.NewLine;
         private readonly string NEW_LINE = Environment.NewLine;
         private const string INDENTATION = "    ";
 
-        public CoffeeShop(Drink drink)
+        public CoffeeShop(IDrink drink)
         {
             Drink = drink;
             Customers = new List<Customer>();
         }
 
-        public Drink Drink { get; private set; }
+        public IDrink Drink { get; private set; }
         public List<Customer> Customers { get; private set; }
 
         public void AddCustomer(Customer customer)

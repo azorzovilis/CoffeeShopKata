@@ -1,6 +1,6 @@
 ﻿namespace CoffeeShop.Core
 {
-    public class Drink
+    public class Drink : IDrink
     {
         public Drink(string title)
         {
