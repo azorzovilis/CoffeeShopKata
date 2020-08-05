@@ -30,7 +30,6 @@
             double incomeFromDrinks = 0;
             int totalLoyaltyPointsAccrued = 0;
             int totalLoyaltyPointsRedeemed = 0;
-            int totalCustomers = 0;
 
             string result = "Coffee Shop Summary";
 
@@ -64,7 +63,7 @@
 
             result += VERTICAL_WHITE_SPACE;
             
-            result += "Total customers: " + totalCustomers;
+            result += "Total customers: " + Customers.Count;
             result += NEW_LINE;
             result += INDENTATION + "General sales: " + Customers.Count(p => p.Type == CustomerType.General);
             result += NEW_LINE;
@@ -90,7 +89,7 @@
 
             result += NEW_LINE;
 
-            result += (profit > 20 ? "Coffee Shop will open tomorrow: " : "Coffee Shop will not open tomorrow");
+            result += (profit > 20 ? "Coffee Shop will open tomorrow" : "Coffee Shop will not open tomorrow");
 
             return result;
         }

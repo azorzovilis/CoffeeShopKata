@@ -32,7 +32,7 @@ namespace CoffeeShop.Core.UnitTests
 
             Assert.AreEqual(
                 "Coffee Shop Summary" + Environment.NewLine + Environment.NewLine +
-                "Total customers: 0" + Environment.NewLine +
+                "Total customers: 7" + Environment.NewLine +
                 "    General sales: 3" + Environment.NewLine +
                 "    Loyalty member sales: 3" + Environment.NewLine +
                 "    Employee Complimentary: 1" + Environment.NewLine + Environment.NewLine +
@@ -41,7 +41,7 @@ namespace CoffeeShop.Core.UnitTests
                 "Coffee Shop generating profit of: 150" + Environment.NewLine + Environment.NewLine +
                 "Total loyalty points given away: 10" + Environment.NewLine +
                 "Total loyalty points redeemed: 100" + Environment.NewLine + Environment.NewLine +
-                "Coffee Shop will open tomorrow: ",
+                "Coffee Shop will open tomorrow",
                 result);
         }
 
