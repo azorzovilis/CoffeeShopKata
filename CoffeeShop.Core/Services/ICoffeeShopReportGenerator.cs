@@ -2,6 +2,6 @@
 {
     public interface ICoffeeShopReportGenerator
     {
-        string GenerateSummaryReport(ICoffeeShop coffeeShop);
+        string GenerateSummaryReport(ICoffeeShopState state);
     }
 }

@@ -2,37 +2,28 @@
 {
     using System;
     using System.Collections.Generic;
+    using CustomExceptions;
+    using Factories;
     using Services;
-    using Strategies;
 
     public class CoffeeShop : ICoffeeShop
     {
         private readonly ICoffeeShopReportGenerator _coffeeShopReportGenerator;
+        private readonly ICoffeeStrategyFactory _coffeeStrategyFactory;
+        private readonly ICoffeeShopState _coffeeShopState;
 
-        //TODO: Remove drink dependency
-        public CoffeeShop(IDrink drink, ICoffeeShopReportGenerator coffeeShopReportGenerator)
+        public CoffeeShop(ICoffeeShopReportGenerator coffeeShopReportGenerator, 
+            ICoffeeStrategyFactory coffeeStrategyFactory,
+            ICoffeeShopState coffeeShopState)
         {
             _coffeeShopReportGenerator = coffeeShopReportGenerator;
-            Drink = drink;
+            _coffeeStrategyFactory = coffeeStrategyFactory;
+            _coffeeShopState = coffeeShopState;
+
             Customers = new List<Customer>();
         }
 
-        public IDrink Drink { get; }
-
         public List<Customer> Customers { get; }
-
-        public int InitialBeanCount { get; set; } = 1000;
-
-        public decimal CostOfDrinks { get; set; }
-
-        public decimal IncomeFromDrinks { get; set; }
-
-        public int TotalLoyaltyPointsAccrued { get; set; }
-
-        public int TotalLoyaltyPointsRedeemed { get; set; }
-
-        public int BeanCount { get; set; } = 1000;
-
 
         public void AddCustomer(Customer customer)
         {
@@ -41,37 +32,25 @@
 
         public string GetSummary()
         {
-            //TODO: check if there are enough beans for coffee
             foreach (var customer in Customers)
             {
-                var customerCoffeeContext = new CustomerCoffeeContext();
-
-                switch (customer.Type)
+                try
                 {
-                    case CustomerType.General:
-                        customerCoffeeContext.SetCustomerCoffeeCalculatorStrategy(new GeneralCustomerCoffeeCalculator());
-                        break;
+                    var customerCoffeeContext = _coffeeStrategyFactory.CreateCoffeeContext(customer.Type);
 
-                    case CustomerType.LoyaltyMember:
-                        customerCoffeeContext.SetCustomerCoffeeCalculatorStrategy(new LoyaltyCustomerCoffeeCalculator());
-                        break;
+                    foreach (var drink in customer.Drinks)
+                    {
+                        customerCoffeeContext.UpdateCoffeeShopState(_coffeeShopState, customer, drink);
+                    }
 
-                    case CustomerType.CoffeeEmployee:
-                        customerCoffeeContext.SetCustomerCoffeeCalculatorStrategy(new EmployeeCoffeeCalculator());
-                        break;
-
-                    case CustomerType.DiscountMember:
-                        customerCoffeeContext.SetCustomerCoffeeCalculatorStrategy(new DiscountCustomerCoffeeCalculator());
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
-
-                customerCoffeeContext.Calculate(this, customer);
+                catch (OutOfCoffeeBeansException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
 
-            return _coffeeShopReportGenerator.GenerateSummaryReport(this);
+            return _coffeeShopReportGenerator.GenerateSummaryReport(_coffeeShopState);
         }
     }
 }

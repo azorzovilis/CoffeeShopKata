@@ -1,99 +1,62 @@
 namespace CoffeeShop.Core.UnitTests
 {
+    using System.Collections.Generic;
     using Moq;
     using NUnit.Framework;
-    using System;
-    using System.Linq;
+    using Factories;
     using Services;
+    using Strategies;
 
-    //TODO: This test should become an integration test
     public class CoffeeShopTests
     {
-        private readonly IDrink _drink = Mock.Of<IDrink>();
+        private readonly ICoffeeStrategyFactory _coffeeStrategyFactory = Mock.Of<ICoffeeStrategyFactory>();
+        private readonly ICoffeeShopReportGenerator _coffeeShopReportGenerator = Mock.Of<ICoffeeShopReportGenerator>();
+        private readonly ICoffeeShopState _coffeeShopState = Mock.Of<ICoffeeShopState>();
+        private readonly ICustomerCoffeeContext _customerCoffeeContext = Mock.Of<ICustomerCoffeeContext>();
+
         private ICoffeeShop _itemUnderTest;
 
         [Test]
-        public void GivenCoffeeShop_WhenCallingAddCustomer_ThenCustomerIsAddedInTheShop()
+        public void GivenCoffeeShop_WhenCallingGetSummary_ThenSummaryIsReturned()
         {
-            _itemUnderTest = GivenCoffeeShop();
-
-            var customer = new Customer { Name = "Artemis" };
-
-            _itemUnderTest.AddCustomer(customer);
-
-            Assert.AreEqual(8, _itemUnderTest.Customers.Count);
-            Assert.AreEqual("Artemis", _itemUnderTest.Customers.Single(c => c.Name == "Artemis").Name);
-        }
-
-        [Test]
-        public void GivenCoffeeShop_WhenCallingGetSummary_ThenSummaryStringShouldBeReturned()
-        {
-            _itemUnderTest = GivenCoffeeShop();
+            _itemUnderTest = GivenCoffeeShopWithCustomers();
 
             var result = _itemUnderTest.GetSummary();
 
-            Assert.AreEqual(
-                "Coffee Shop Summary" + Environment.NewLine + Environment.NewLine +
-                "Total customers: 7" + Environment.NewLine +
-                "    General sales: 3" + Environment.NewLine +
-                "    Loyalty member sales: 3" + Environment.NewLine +
-                "    Employee Complimentary: 1" + Environment.NewLine + Environment.NewLine +
-                "Total revenue from drinks: 500" + Environment.NewLine +
-                "Total costs from drinks: 350" + Environment.NewLine +
-                "Coffee Shop generating profit of: 150" + Environment.NewLine + Environment.NewLine +
-                "Total loyalty points given away: 10" + Environment.NewLine +
-                "Total loyalty points redeemed: 100" + Environment.NewLine + Environment.NewLine +
-                "Beans used: 1050" + Environment.NewLine +
-                "Beans remaining: -50" + Environment.NewLine + Environment.NewLine +
-                "Coffee Shop will not open tomorrow",
-                result);
+            Assert.IsNotEmpty(result);
+            Mock.Get(_coffeeShopReportGenerator).Verify(c => c.GenerateSummaryReport(_coffeeShopState), Times.Once);
         }
 
-        [Test]
-        public void GivenEmptyCoffeeShop_WhenCallingGetSummary_ThenSummaryStringShouldBeReturned()
+        private ICoffeeShop GivenCoffeeShopWithCustomers()
         {
-            _itemUnderTest = GivenEmptyCoffeeShop();
+            Mock.Get(_coffeeStrategyFactory).Setup(s => s.CreateCoffeeContext(It.IsAny<CustomerType>())).Returns(_customerCoffeeContext);
+            Mock.Get(_coffeeShopReportGenerator).Setup(s => s.GenerateSummaryReport(It.IsAny<ICoffeeShopState>())).Returns("My coffee shop summary");
 
-            var result = _itemUnderTest.GetSummary();
+            var coffeeShop = new CoffeeShop(_coffeeShopReportGenerator, _coffeeStrategyFactory, _coffeeShopState);
 
-            Assert.AreEqual(
-                    "Coffee Shop Summary" + Environment.NewLine + Environment.NewLine +
-                            "Total customers: 0" + Environment.NewLine +
-                            "    General sales: 0" + Environment.NewLine +
-                            "    Loyalty member sales: 0" + Environment.NewLine +
-                            "    Employee Complimentary: 0" + Environment.NewLine + Environment.NewLine +
-                            "Total revenue from drinks: 0" + Environment.NewLine +
-                            "Total costs from drinks: 0" + Environment.NewLine +
-                            "Coffee Shop losing money of: 0" + Environment.NewLine + Environment.NewLine +
-                            "Total loyalty points given away: 0" + Environment.NewLine +
-                            "Total loyalty points redeemed: 0" + Environment.NewLine + Environment.NewLine +
-                            "Beans used: 0" + Environment.NewLine +
-                            "Beans remaining: 1000" + Environment.NewLine + Environment.NewLine +
-                            "Coffee Shop will not open tomorrow",
-                    result);
-        }
+            coffeeShop.AddCustomer(new Customer
+            {
+                Name = "Christopher",
+                Type = CustomerType.General,
+                Drinks = new List<Drink>
+                {
+                    new Drink("Americano") { BaseCost = 50, BasePrice = 100, LoyaltyPointsGained = 5 }
+                }
+            });
 
-        private ICoffeeShop GivenCoffeeShop()
-        {
-            var drink = Mock.Of<IDrink>(d =>
-                d.Title == "Americano" && d.BaseCost == 50 && d.BasePrice == 100 && d.LoyaltyPointsGained == 5);
-
-            var coffeeShop = new CoffeeShop(drink, new CoffeeShopReportGenerator());
-
-            coffeeShop.AddCustomer(new Customer { Name = "Christopher", Type = CustomerType.General });
-            coffeeShop.AddCustomer(new Customer { Name = "Damian", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 1000, IsUsingLoyaltyPoints = true });
-            coffeeShop.AddCustomer(new Customer { Name = "Craig", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 0, IsUsingLoyaltyPoints = false });
-            coffeeShop.AddCustomer(new Customer { Name = "Kirsty", Type = CustomerType.LoyaltyMember, LoyaltyPoints = 60, IsUsingLoyaltyPoints = false });
-            coffeeShop.AddCustomer(new Customer { Name = "Andrzej", Type = CustomerType.CoffeeEmployee });
-            coffeeShop.AddCustomer(new Customer { Name = "Matt", Type = CustomerType.General });
-            coffeeShop.AddCustomer(new Customer { Name = "Colin", Type = CustomerType.General });
+            coffeeShop.AddCustomer(new Customer
+            {
+                Name = "Kirsty",
+                Type = CustomerType.LoyaltyMember,
+                LoyaltyPoints = 60,
+                IsUsingLoyaltyPoints = false,
+                Drinks = new List<Drink> {
+                    new Drink("Latte") { BaseCost = 50, BasePrice = 100, LoyaltyPointsGained = 5 },
+                    new Drink("Espresso") { BaseCost = 30, BasePrice = 60, LoyaltyPointsGained = 3 }
+                }
+            });
 
             return coffeeShop;
-        }
-
-        private ICoffeeShop GivenEmptyCoffeeShop()
-        {
-            return new CoffeeShop(_drink, new CoffeeShopReportGenerator());
         }
     }
 }

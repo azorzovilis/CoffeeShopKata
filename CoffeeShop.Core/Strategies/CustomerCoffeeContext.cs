@@ -1,17 +1,17 @@
 ﻿namespace CoffeeShop.Core.Strategies
 {
-    internal class CustomerCoffeeContext
+    internal class CustomerCoffeeContext : ICustomerCoffeeContext
     {
-        private ICustomerCoffeeCalculator _customerCoffeeCalculator;
+        private ICustomerCoffeeStrategy _customerCoffeeStrategy;
 
-        public void SetCustomerCoffeeCalculatorStrategy(ICustomerCoffeeCalculator customerCoffeeCalculator)
+        public void SetCustomerCoffeeStrategy(ICustomerCoffeeStrategy customerCoffeeStrategy)
         {
-            _customerCoffeeCalculator = customerCoffeeCalculator;
+            _customerCoffeeStrategy = customerCoffeeStrategy;
         }
 
-        public void Calculate(ICoffeeShop coffeeShop, Customer customer)
+        public void UpdateCoffeeShopState(ICoffeeShopState coffeeShopState, Customer customer, Drink drink)
         {
-            _customerCoffeeCalculator?.Calculate(coffeeShop, customer);
+            _customerCoffeeStrategy?.UpdateCoffeeShopState(coffeeShopState, customer, drink);
         }
     }
 }
